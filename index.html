@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>João Meyer Muhlmann - Currículo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Currículo de João Meyer Muhlmann, estudante de Ciência da Computação na UFPR e pesquisador no C3SL." />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="page">
+    <header class="header">
+      <div>
+        <h1 class="name">João Meyer Muhlmann</h1>
+        <p class="role">Ciência da Computação • UFPR</p>
+      </div>
+      <div class="contact">
+        <a href="tel:+5541991744965">+55 (41) 99174-4965</a>
+        <a href="mailto:joaomeyermuhlmann@gmail.com">joaomeyermuhlmann@gmail.com</a>
+      </div>
+    </header>
+
+    <nav class="social">
+      <!-- Substitua os # pelos seus links reais -->
+      <a href="https://github.com/joaomeyerr12" target="_blank" rel="noopener">GitHub</a>
+      <!-- <a href="https://gitlab.com/SEU_USUARIO" target="_blank" rel="noopener">GitLab</a> --!>
+      <a href="https://www.linkedin.com/in/" target="_blank" rel="noopener">LinkedIn</a>
+      <a href="mailto:joaomeyermuhlmann@gmail.com">E-mail</a>
+    </nav>
+
+    <main>
+      <!-- Sobre (opcional, mas deixa o site mais completo) -->
+      <section class="section">
+        <h2>Sobre</h2>
+        <p>
+          Estudante de Ciência da Computação na Universidade Federal do Paraná (UFPR),
+          com experiência em desenvolvimento de sistemas, pesquisa em segurança de redes
+          e participação em projetos de software livre. Interesse em backend, dados,
+          infraestrutura e aplicações de alto impacto.
+        </p>
+      </section>
+
+      <section class="section">
+        <h2>Educação</h2>
+        <article class="item">
+          <div class="item-header">
+            <div>
+              <h3>Universidade Federal do Paraná (UFPR)</h3>
+              <p class="item-subtitle">Bacharelado em Ciência da Computação</p>
+            </div>
+            <span class="item-date">2023 – Presente</span>
+          </div>
+        </article>
+      </section>
+
+      <section class="section">
+        <h2>Habilidades</h2>
+        <div class="skills-grid">
+          <div>
+            <h3>Linguagens de Programação</h3>
+            <p>C, Python, Java, TypeScript, JavaScript, SQL, C++</p>
+          </div>
+          <div>
+            <h3>Frameworks e Ferramentas</h3>
+            <p>Linux, Angular, Ionic, Node.js, Next.js, Express, Git</p>
+          </div>
+          <div>
+            <h3>Idiomas</h3>
+            <p>Português (Nativo), Inglês (Fluente), Espanhol (Intermediário)</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>Experiência</h2>
+
+        <article class="item">
+          <div class="item-header">
+            <div>
+              <h3>Pesquisador</h3>
+              <p class="item-subtitle">
+                Centro de Computação Científica e Software Livre (C3SL) – UFPR
+              </p>
+            </div>
+            <span class="item-date">Abril 2024 – Presente</span>
+          </div>
+          <ul>
+            <li>
+              Desenvolvimento do sistema de gerenciamento do C3SL, incluindo
+              modelagem e implementação do banco de dados, backend e frontend,
+              otimizando processos administrativos e gestão de documentos do laboratório.
+            </li>
+            <li>
+              Participação na plataforma MEC de Recursos Educacionais Digitais (MECRED),
+              atuando na reformulação de frontend e backend para melhorar a usabilidade
+              e a eficiência na distribuição de objetos educacionais digitais.
+            </li>
+          </ul>
+        </article>
+
+        <article class="item">
+          <div class="item-header">
+            <div>
+              <h3>Participante de Iniciação Científica</h3>
+              <p class="item-subtitle">
+                Security and Reverse Engineering Team (SECRET) – UFPR
+              </p>
+            </div>
+            <span class="item-date">Julho 2024 – Janeiro 2025</span>
+          </div>
+          <ul>
+            <li>
+              Análise e mitigação de ataques DDoS utilizando técnicas como
+              <em>Traffic Policing</em>, <em>Traffic Shaping</em> e sistemas de reputação.
+            </li>
+            <li>
+              Pesquisa e aprimoramento do sistema de defesa DeMONS, com foco em
+              adaptações e otimizações do framework para aumentar a eficiência na
+              detecção e resposta a comportamentos anômalos.
+            </li>
+            <li>
+              Contribuição para maior resiliência da infraestrutura de rede contra
+              ataques de negação de serviço distribuídos (DDoS).
+            </li>
+          </ul>
+        </article>
+
+        <article class="item">
+          <div class="item-header">
+            <div>
+              <h3>Estagiário em Desenvolvimento de Sistemas</h3>
+              <p class="item-subtitle">CPN Informática</p>
+            </div>
+            <span class="item-date">Janeiro 2022</span>
+          </div>
+          <ul>
+            <li>
+              Acompanhamento do desenvolvimento do aplicativo 156 Cidadão,
+              com foco em usabilidade e experiência do usuário.
+            </li>
+            <li>
+              Atuação em equipe sob orientação de desenvolvedores experientes,
+              aprendendo melhores práticas de engenharia de software.
+            </li>
+            <li>
+              Contato com o ciclo de vida completo de desenvolvimento, da concepção
+              à implementação e manutenção de funcionalidades.
+            </li>
+          </ul>
+        </article>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p>© <span id="year"></span> João Meyer Muhlmann</p>
+    </footer>
+  </div>
+
+  <script>
+    // Atualiza o ano automaticamente no rodapé
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
+

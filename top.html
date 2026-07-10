@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Bombardiro Crocodilo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    :root{
+      --bg:#0b0b10;
+      --fg:#eaeaea;
+      --accent:#35e6a6;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Arial,sans-serif;
+      background: radial-gradient(1200px 600px at 20% -10%, #10131a 10%, #0b0b10 60%), var(--bg);
+      color:var(--fg);
+      line-height:1.4;
+      min-height:100svh;
+      display:flex;
+      flex-direction:column;
+      gap:24px;
+      padding:24px;
+    }
+    h1{
+      margin:0;
+      font-size:clamp(1.2rem,2.5vw,2rem);
+      letter-spacing:.5px;
+      display:flex;
+      align-items:center;
+      gap:.5rem;
+      position:relative;
+      z-index:2;
+    }
+    .wrap{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:20px;
+      align-items:start;
+      position:relative;
+      z-index:2;
+    }
+    .player{
+      width: min(100%, 720px);
+      aspect-ratio: 16/9;
+      border:0;
+      border-radius:16px;
+      box-shadow:0 10px 30px rgba(0,0,0,.35);
+    }
+
+    /* Camada de bolhas pela tela toda */
+    .sky{
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      z-index:3;
+      overflow:hidden;
+    }
+    .bubble{
+      position:fixed;
+      left: calc(var(--sx, 50) * 1vw / 100 * 100);
+      top:  calc(var(--sy, 50) * 1vh / 100 * 100);
+      width: clamp(56px, var(--size, 90px), 128px);
+      aspect-ratio: 1/1;
+      transform: translate(-50%, -50%);
+      border-radius:50%;
+      display:grid;
+      place-items:center;
+      box-shadow:
+        0 8px 18px rgba(0,0,0,.35),
+        inset 0 0 0 2px rgba(255,255,255,.06);
+      background: radial-gradient(120% 120% at 30% 30%, rgba(255,255,255,.12), rgba(255,255,255,.02) 60%, rgba(0,0,0,.1) 100%);
+      will-change: transform;
+      --ax: 12vw;
+      --ay: 10vh;
+      --drift: 16s;
+      --delay: 0s;
+      animation: wander var(--drift) ease-in-out var(--delay) infinite alternate;
+    }
+    .ring{
+      position:relative;
+      width:100%;
+      height:100%;
+      border-radius:50%;
+      overflow:hidden;
+      animation: spin var(--rot, 14s) linear infinite;
+    }
+    .ring::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      border-radius:50%;
+      outline:2px solid rgba(255,255,255,.06);
+    }
+    .bubble img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+      filter: saturate(1.05) contrast(1.02);
+    }
+    .tag{
+      position:absolute;
+      bottom:-4px;
+      left:50%;
+      transform:translateX(-50%);
+      font-size:.72rem;
+      background:rgba(0,0,0,.55);
+      border:1px solid rgba(255,255,255,.12);
+      padding:.15rem .5rem;
+      border-radius:999px;
+      white-space:nowrap;
+      backdrop-filter: blur(4px);
+      pointer-events:none;
+      user-select:none;
+    }
+
+    @keyframes spin{ to{ transform: rotate(360deg); } }
+    @keyframes wander{
+      0%   { transform: translate(-50%, -50%) translate( 0, 0) scale(1.00); }
+      25%  { transform: translate(-50%, -50%) translate( var(--ax), calc(var(--ay) * -0.8)) scale(1.06); }
+      50%  { transform: translate(-50%, -50%) translate( calc(var(--ax) * -0.6), var(--ay)) scale(0.94); }
+      75%  { transform: translate(-50%, -50%) translate( calc(var(--ax) * 0.4), calc(var(--ay) * 0.5)) scale(1.08); }
+      100% { transform: translate(-50%, -50%) translate( calc(var(--ax) * -1), calc(var(--ay) * -1)) scale(0.98); }
+    }
+    @media (prefers-reduced-motion: reduce){
+      .bubble { animation: none; }
+      .ring   { animation: none; }
+    }
+
+    /* Etiqueta/balão com link (canto inferior direito) */
+    .corner-badge{
+      position:fixed;
+      right:16px;
+      bottom:16px;
+      z-index:4;
+      background:#10b981; /* verde */
+      color:#031a12;
+      text-decoration:none;
+      font-weight:700;
+      padding:.6rem .9rem;
+      border-radius:14px;
+      box-shadow: 0 10px 24px rgba(0,0,0,.35);
+      display:inline-flex;
+      align-items:center;
+      gap:.5rem;
+    }
+    .corner-badge::after{
+      content:"";
+      position:absolute;
+      right:14px; bottom:-10px;
+      width:0; height:0;
+      border-left:10px solid transparent;
+      border-right:10px solid transparent;
+      border-top:10px solid #10b981; /* rabinho do balão */
+      filter: drop-shadow(0 3px 2px rgba(0,0,0,.25));
+    }
+    .corner-badge:hover{ filter: brightness(1.05); transform: translateY(-1px); }
+
+    /* Cartão da frase (texto preto) */
+    .fortune{
+      position:fixed;
+      left:16px;
+      bottom:16px;
+      z-index:4;
+      background:#ffffff;
+      color:#000000;           /* texto preto */
+      border:1px solid #e9e9e9;
+      padding:.65rem .8rem;
+      border-radius:12px;
+      max-width:min(90vw, 440px);
+      box-shadow: 0 10px 24px rgba(0,0,0,.25);
+      font-size:.95rem;
+    }
+    .fortune b{ font-weight:700; }
+  </style>
+</head>
+<body>
+  <h1>🐊💣✈️ BOMBARDIRO CROCODILO</h1>
+
+  <div class="wrap">
+    <iframe
+      class="player"
+      src="https://www.youtube.com/embed/2rw1GTlz7ew"
+      title="Bombardiro Crocodilo"
+      allowfullscreen>
+    </iframe>
+  </div>
+  <div class="wrap">
+    <iframe
+      class="player"
+      src="https://www.youtube.com/embed/eRXE8Aebp7s?autoplay=1&controls=0&loop=1&playlist=eRXE8Aebp7s&mute=1&showinfo=0&modestbranding=1&rel=0"
+      allow="autoplay"
+      allowfullscreen>
+    </iframe>
+  </div>
+
+  <h1 style="color: black;">https://www.youtube.com/watch?v=53GLPg-YbxU</h1>                       
+  <h1 style="color: black;">https://www.youtube.com/watch?v=fwYQOrGqA4Y</h1>
+
+  <!-- Bolhas pela tela toda -->
+  <section class="sky" aria-label="Avatares flutuando">
+    <figure class="bubble" style="--sx:12; --sy:28; --size:96px; --rot:18s; --drift:17s; --delay:-1s; --ax:14vw; --ay:12vh">
+      <div class="ring"><img src="https://i.pravatar.cc/200?img=5" alt="Clotilde"></div>
+      <figcaption class="tag">Clotilde</figcaption>
+    </figure>
+    <figure class="bubble" style="--sx:32; --sy:18; --size:84px; --rot:12s; --drift:13s; --delay:-2s; --ax:12vw; --ay:10vh">
+      <div class="ring"><img src="https://i.pravatar.cc/200?img=12" alt="Ailton"></div>
+      <figcaption class="tag">Ailton</figcaption>
+    </figure>
+    <figure class="bubble" style="--sx:58; --sy:26; --size:110px; --rot:16s; --drift:18s; --delay:-0.5s; --ax:11vw; --ay:13vh">
+      <div class="ring"><img src="https://i.pravatar.cc/200?img=22" alt="Hector"></div>
+      <figcaption class="tag">Hector</figcaption>
+    </figure>
+    <figure class="bubble" style="--sx:78; --sy:20; --size:70px; --rot:10s; --drift:12s; --delay:-3s; --ax:10vw; --ay:9vh">
+      <div class="ring"><img src="https://i.pravatar.cc/200?img=15" alt="Joel Santana"></div>
+      <figcaption class="tag">Joel Santana</figcaption>
+    </figure>
+    <figure class="bubble" style="--sx:90; --sy:48; --size:92px; --rot:14s; --drift:15s; --delay:-1.8s; --ax:12vw; --ay:11vh">
+      <div class="ring"><img src="https://i.pravatar.cc/200?img=30" alt="Salamandra"></div>
+      <figcaption class="tag">Salamandra</figcaption>
+    </figure>
+    <figure class="bubble" style="--sx:70; --sy:70; --size:80px; --rot:13s; --drift:14s; --delay:-2.6s; --ax:10vw; --ay:12vh">
+      <div class="ring"><img src="https://i.pravatar.cc/200?img=9" alt="Eusebio"></div>
+      <figcaption class="tag">Eusebio</figcaption>
+    </figure>
+    <figure class="bubble" style="--sx:46; --sy:78; --size:120px; --rot:20s; --drift:19s; --delay:-0.9s; --ax:15vw; --ay:10vh">
+      <div class="ring"><img src="https://i.pravatar.cc/200?img=41" alt="Daiyany"></div>
+      <figcaption class="tag">Daiyany</figcaption>
+    </figure>
+    <figure class="bubble" style="--sx:24; --sy:66; --size:88px; --rot:17s; --drift:16s; --delay:-2.2s; --ax:12vw; --ay:10vh">
+      <div class="ring"><img src="https://i.pravatar.cc/200?img=55" alt="Esmeraldo"></div>
+      <figcaption class="tag">Esmeraldo</figcaption>
+    </figure>
+    <figure class="bubble" style="--sx:8; --sy:54; --size:76px; --rot:11s; --drift:12s; --delay:-1.4s; --ax:10vw; --ay:9vh">
+      <div class="ring"><img src="https://i.pravatar.cc/200?img=3" alt="Denis"></div>
+      <figcaption class="tag">Denis</figcaption>
+    </figure>
+    <figure class="bubble" style="--sx:92; --sy:18; --size:64px; --rot:9s; --drift:11s; --delay:-2.9s; --ax:9vw; --ay:8vh">
+      <div class="ring"><img src="https://i.pravatar.cc/200?img=66" alt="Djamilo"></div>
+      <figcaption class="tag">Djamilo aka "DJ amilo"</figcaption>
+    </figure>
+    <figure class="bubble" style="--sx:92; --sy:18; --size:64px; --rot:9s; --drift:11s; --delay:-2.9s; --ax:9vw; --ay:8vh">
+      <div class="ring"><img src="https://i.pravatar.cc" alt="Djamilo"></div>
+      <figcaption class="tag">Cervejo Ezequiel</figcaption>
+    </figure>
+    <figure class="bubble" style="--sx:92; --sy:18; --size:64px; --rot:9s; --drift:11s; --delay:-2.9s; --ax:9vw; --ay:8vh">
+      <div class="ring"><img src="https://i.pravatar.cc" alt="Djamilo"></div>
+      <figcaption class="tag">Vodko Caipirinho</figcaption>
+    </figure>
+    <figure class="bubble" style="--sx:92; --sy:18; --size:64px; --rot:9s; --drift:11s; --delay:-2.9s; --ax:9vw; --ay:8vh">
+      <div class="ring"><img src="https://i.pravatar.cc" alt="Djamilo"></div>
+      <figcaption class="tag">Iago Bomb</figcaption>
+    </figure>
+  </section>
+
+  <!-- Etiqueta/balão com link -->
+  <a class="corner-badge" href="https://jogodotigrinho.com.br/" target="_blank" rel="noopener noreferrer" title="Abrir jogodotigrinho.com.br">
+    🎯 jogodotigrinho.com.br
+  </a>
+
+  <!-- Frase de biscoito (texto preto, muda a cada carregamento) -->
+  <div class="fortune" id="fortuneBox">
+    <b>Fortune:</b> <span id="fortuneText">…</span>
+  </div>
+
+  <script>
+  // --- Frase de biscoito (mantida) ---
+  const frases = [
+    "A sorte favorece quem se prepara.",
+    "Pequenos passos constroem grandes jornadas.",
+    "Hoje é um bom dia para começar algo novo.",
+    "Confie no processo, colha os frutos.",
+    "Você é mais forte do que imagina.",
+    "Oportunidades aparecem para quem está atento.",
+    "Respire fundo e siga adiante.",
+    "O impossível é só o possível que ninguém tentou.",
+    "A consistência vence o talento distraído.",
+    "Boas ideias pedem execução.",
+    "É vuqui vuqui, vuqui, vuqui na onda maluca.",
+    "Voce é mais louco que todos nós.",
+    "Calma vida, ta de boa"
+  ];
+  document.getElementById("fortuneText").textContent =
+    frases[Math.floor(Math.random()*frases.length)];
+
+  // --- Posicionador: garante posições únicas (em %) para cada .bubble ---
+  (function placeUnique(){
+    const bubbles = Array.from(document.querySelectorAll('.bubble'));
+    const n = bubbles.length;
+
+    if (!n) return;
+
+    // Margem nas bordas (em % da viewport) para não cortar
+    const margin = 8; // 8% em cada lado
+
+    // Define uma grade "quase quadrada"
+    const cols = Math.ceil(Math.sqrt(n));
+    const rows = Math.ceil(n / cols);
+
+    // Tamanho de cada célula (em % da viewport)
+    const usableW = 100 - 2*margin;
+    const usableH = 100 - 2*margin;
+    const cellW = usableW / cols;
+    const cellH = usableH / rows;
+
+    // Índices de células embaralhados
+    const idxs = Array.from({length:n}, (_,i)=>i).sort(()=>Math.random()-0.5);
+
+    for (let k = 0; k < n; k++){
+      const i = idxs[k];
+      const r = Math.floor(i / cols);
+      const c = i % cols;
+
+      // Centro da célula em %
+      let sx = margin + (c + 0.5) * cellW;
+      let sy = margin + (r + 0.5) * cellH;
+
+      // “Jitter” (aleatório pequeno) para não parecer grade rígida
+      const jx = (Math.random() - 0.5) * cellW * 0.4; // até 40% da célula
+      const jy = (Math.random)() - 0.5 ? (Math.random() - 0.5) * cellH * 0.4 : 0;
+
+      sx = Math.max(margin, Math.min(100 - margin, sx + jx));
+      sy = Math.max(margin, Math.min(100 - margin, sy + jy));
+
+      // Aplique nas CSS variables que seu CSS já usa
+      bubbles[k].style.setProperty('--sx', sx.toFixed(2));
+      bubbles[k].style.setProperty('--sy', sy.toFixed(2));
+
+      // Opcional: variar levemente o "drift" para cada bolha
+      const drift = (12 + Math.random()*8).toFixed(2) + 's';
+      const delay = (-Math.random()*3).toFixed(2) + 's';
+      const ax = (8 + Math.random()*8).toFixed(2) + 'vw';
+      const ay = (7 + Math.random()*7).toFixed(2) + 'vh';
+      bubbles[k].style.setProperty('--drift', drift);
+      bubbles[k].style.setProperty('--delay', delay);
+      bubbles[k].style.setProperty('--ax', ax);
+      bubbles[k].style.setProperty('--ay', ay);
+    }
+  })();
+</script>
+
+
+</body>
+</html>
+
