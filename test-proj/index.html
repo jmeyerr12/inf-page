@@ -75,23 +75,17 @@
     .logo {
       display: inline-flex;
       align-items: center;
-      gap: 12px;
-      color: var(--vinho);
-      font-family: Georgia, "Times New Roman", serif;
-      font-size: 24px;
-      font-weight: 700;
     }
 
-    .logo-symbol {
-      width: 38px;
-      height: 38px;
-      display: grid;
-      place-items: center;
-      border-radius: 12px;
-      background: var(--vinho);
-      color: var(--dourado-claro);
-      box-shadow: 0 8px 20px rgba(93, 31, 32, 0.2);
-      font-size: 20px;
+    .logo-image {
+      display: block;
+      width: auto;
+      height: 56px;
+      object-fit: contain;
+    }
+
+    footer .logo-image {
+      height: 52px;
     }
 
     .menu {
@@ -1082,6 +1076,14 @@
         width: min(var(--largura), calc(100% - 26px));
       }
 
+      .logo-image {
+        height: 46px;
+      }
+
+      footer .logo-image {
+        height: 44px;
+      }
+
       .hero {
         padding: 76px 0 64px;
       }
@@ -1226,9 +1228,8 @@
 <body>
   <header class="topbar">
     <div class="container nav">
-      <a href="#inicio" class="logo">
-        <span class="logo-symbol">♪</span>
-        <span>oacordeonista</span>
+      <a href="#inicio" class="logo" aria-label="O Acordeonista">
+        <img src="logo.jpeg" alt="O Acordeonista" class="logo-image" />
       </a>
 
       <button class="menu-toggle" aria-label="Abrir menu" aria-expanded="false">
@@ -1635,9 +1636,8 @@
 
   <footer>
     <div class="container footer-main">
-      <a href="#inicio" class="logo" style="color:white;">
-        <span class="logo-symbol">♪</span>
-        <span>oacordeonista</span>
+      <a href="#inicio" class="logo" aria-label="O Acordeonista">
+        <img src="logo.jpeg" alt="O Acordeonista" class="logo-image" />
       </a>
 
       <p>Aprenda com método. Toque com sentimento.</p>
