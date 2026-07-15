@@ -575,26 +575,36 @@
       padding: 32px;
       overflow: hidden;
       border-radius: 32px;
-      background:
-        linear-gradient(rgba(40, 16, 17, 0.06), rgba(40, 16, 17, 0.84)),
-        url("danilo.png") center top / cover no-repeat;
+      background-color: var(--vinho);
+      background-image:
+        linear-gradient(rgba(40, 16, 17, 0.05), rgba(40, 16, 17, 0.88)),
+        url("danilo.png"),
+        radial-gradient(circle at 60% 20%, #b06d58, transparent 28%),
+        linear-gradient(145deg, #7f3d31, #3c1819);
+      background-position:
+        center,
+        center top,
+        center,
+        center;
+      background-size:
+        cover,
+        contain,
+        cover,
+        cover;
+      background-repeat: no-repeat;
       box-shadow: var(--sombra);
-    }
-
-    .teacher-photo::before {
-      position: absolute;
-      inset: 24px;
-      display: grid;
-      place-items: center;
-      border: 1px dashed rgba(255, 255, 255, 0.28);
-      border-radius: 24px;
-      color: rgba(255, 255, 255, 0.58);
-      font-size: 14px;
+      color: white;
     }
 
     .teacher-photo-content {
       position: relative;
       z-index: 2;
+      max-width: calc(100% - 210px);
+      padding: 14px 18px;
+      border-radius: 14px;
+      background: rgba(50, 16, 18, 0.72);
+      backdrop-filter: blur(4px);
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
     }
 
     .teacher-photo-content strong {
@@ -609,15 +619,16 @@
 
     .teacher-badge {
       position: absolute;
-      right: -26px;
-      bottom: 40px;
+      right: 20px;
+      bottom: 28px;
       z-index: 3;
-      width: 170px;
-      padding: 22px;
+      width: 185px;
+      padding: 20px;
       border-radius: 19px;
       background: var(--dourado);
       color: var(--vinho-escuro);
       box-shadow: 0 16px 36px rgba(55, 24, 17, 0.2);
+      overflow-wrap: anywhere;
     }
 
     .teacher-badge strong,
@@ -1190,9 +1201,16 @@
         min-height: 430px;
       }
 
+      .teacher-photo-content {
+        max-width: 100%;
+        margin-bottom: 118px;
+      }
+
       .teacher-badge {
         right: 14px;
         bottom: 14px;
+        width: calc(100% - 28px);
+        text-align: center;
       }
 
       .module {
